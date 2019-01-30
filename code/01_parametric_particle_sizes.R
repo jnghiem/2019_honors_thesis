@@ -8,11 +8,6 @@ size <- data.frame(microns=c(420, 297, 250, 74), passing=c(1, 0.985, 0.95, 0.04)
 #size <- data.frame(microns=c(595, 420, 149, 74), passing=c(1, 0.975, 0.06, 0.0075)) #for 40/100 walnut shell
 
 #Setup
-##Defining constants
-rho_w <- 998.2071 #approximate water density at 20 degrees centigrade in kg/m3
-rho_s <- 1300 #approximate walnut shell density in kg/m3
-kv <- 1.0023*10^(-6) #approximate kinematic viscosity of water at 20 degrees centigrade in m2/s
-
 size <- rbind(size, c(0, 0))
 x <- size$microns #assigning the columns of size to individual vectors
 y <- size$passing
@@ -37,23 +32,23 @@ for (i in 1:length(uniq)) { #for loop to compute parameter estimates
 }
 names(estimates) <- c("mu", "sigma") #renaming columns with better names
 
-out <- optim(mapply(median, estimates), loss, lower=floor(mapply(min, estimates)), upper=ceiling(mapply(max, estimates)), method="L-BFGS-B", x=x)$par
+parameters <- optim(mapply(median, estimates), loss, lower=floor(mapply(min, estimates)), upper=ceiling(mapply(max, estimates)), method="L-BFGS-B", x=x)$par
 #optimize by minimizing the RSS using the initial values and bounds from the rough estimates
 
 #Plot the CDF
-plot_func <- function(x) pnorm(x, mean=out[1], sd=out[2]) #a function to plot the CDF
+plot_func <- function(x) pnorm(x, mean=parameters[1], sd=parameters[2]) #a function to plot the CDF
 curve(plot_func, from=0, to=max(x), xlab=expression(Particle~diameter~(mu~m)), ylab="Probability") #plotting the analytical CDF
 abline(h=c(0, 0.5, 0.84, 1), lty=2) #plotting horizontal lines marking 0, D50 (median), D84, and 1
 points(size, col="red", cex=2) #plotting the sieve analysis data
 
 #Plot the PDF
-pdf_func <- function(x) dnorm(x, mean=out[1], sd=out[2]) #a function to plot the PDF
+pdf_func <- function(x) dnorm(x, mean=parameters[1], sd=parameters[2]) #a function to plot the PDF
 curve(pdf_func, from=0, to=max(x), xlab=expression(Particle~diameter~(mu~m)), ylab="Density") #plotting the analytical PDF
-abline(v=out[1], col="red", lty=2) #plotting a vertical line for the mean
+abline(v=parameters[1], col="red", lty=2) #plotting a vertical line for the mean
 abline(h=0, v=0, col="gray") #plotting gray lines for the axes
-abline(v=c(abs(diff(out)), sum(out)), col="blue", lty=2) #plotting the intervals within one standard deviation
-abline(v=c(out[1]-2*out[2], out[1]+2*out[2]), col="purple", lty=2) #plotting the intervals within two standard deviations
-text(x=out[1], y=pdf_func(out[1]), labels=paste0("Mean = ", round(out[1], 4)), pos=4) #plotting label for the mean
+abline(v=c(abs(diff(parameters)), sum(parameters)), col="blue", lty=2) #plotting the intervals within one standard deviation
+abline(v=c(parameters[1]-2*parameters[2], parameters[1]+2*parameters[2]), col="purple", lty=2) #plotting the intervals within two standard deviations
+text(x=parameters[1], y=pdf_func(parameters[1]), labels=paste0("Mean = ", round(parameters[1], 4)), pos=4) #plotting label for the mean
 
 rss <- sum((y-plot_func(x))^2) #computing the residual sum of squares
 tss <- sum((y-mean(y))^2) #computing the total sum of squares

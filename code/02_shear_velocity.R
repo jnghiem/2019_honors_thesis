@@ -1,6 +1,6 @@
 #02 Shear Velocity Calculation
 #This script calculates the shear velocity at various sampled points in the flume using the law of the wall.
-#Conditions are 30hZ flow rate
+#Conditions are 30 Hz flow rate, corresponding to a discharge of 0.013564 m3/s.
 
 library(R.matlab)
 library(data.table)
@@ -8,10 +8,8 @@ library(dplyr)
 library(stringr)
 library(magrittr)
 
-setwd("C:\\Users\\Bearkey\\Documents\\honors_thesis\\code") #setting the working directory
-source("01_parametric_particle_sizes.R") #calling the script to estimate the particle size distribution
 files <- list.files("C:\\Users\\Bearkey\\Documents\\Ecogeomorphic_Flume\\esdlflume\\data\\raw\\vectrino profile experiment 181205", pattern="\\.mat$", full.names=TRUE) #all data files
-z0 <- (out[1]+3*out[2])*10^(-6) #rough estimate of the characteristic length of bed roughness, taken to be the particle diameter three standard deviations above the mean from the estimated distribution
+z0 <- (parameters[1]+3*parameters[2])*10^(-6) #rough estimate of the characteristic length of bed roughness, taken to be the particle diameter three standard deviations above the mean from the estimated distribution
 
 metadata <- fread("C:\\Users\\Bearkey\\Documents\\Ecogeomorphic_Flume\\esdlflume\\data\\raw\\vectrino profile experiment 181205\\positions.csv", data.table=FALSE) %>%
   select(1:4) #reading in metadata
