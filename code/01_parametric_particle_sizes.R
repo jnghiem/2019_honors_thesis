@@ -8,6 +8,11 @@ size <- data.frame(microns=c(420, 297, 250, 74), passing=c(1, 0.985, 0.95, 0.04)
 #size <- data.frame(microns=c(595, 420, 149, 74), passing=c(1, 0.975, 0.06, 0.0075)) #for 40/100 walnut shell
 
 #Setup
+##Defining constants
+rho_w <- 998.2071 #approximate water density at 20 degrees centigrade in kg/m3
+rho_s <- 1300 #approximate walnut shell density in kg/m3
+kv <- 1.0023*10^(-6) #approximate kinematic viscosity of water at 20 degrees centigrade in m2/s
+
 size <- rbind(size, c(0, 0))
 x <- size$microns #assigning the columns of size to individual vectors
 y <- size$passing
