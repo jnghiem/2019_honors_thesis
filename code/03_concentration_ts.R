@@ -24,4 +24,5 @@ concentrationdata <- data %>%
 
 ggplot(concentrationdata, aes(time, mvc))+geom_line(aes(col=location))+facet_grid(height~.)
 
-                                                    
+ggplot(filter(concentrationdata, location=="D"), aes(mvc, height))+geom_point()+facet_wrap(.~time, scales="free")
+

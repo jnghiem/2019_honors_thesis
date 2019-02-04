@@ -10,9 +10,9 @@ refh <- 0.05
 
 #Rouse number computation
 sv <- filter(sheardata, dowels=="F", height==0.07) #the shear velocity in m/s
-if (location=="U") {
+if (loc=="U") {
   sv <- filter(sv, relative_position<0)[1,"shearv"]
-} else if (location=="D") {
+} else if (loc=="D") {
   sv <- filter(sv, relative_position>0)[1,"shearv"]
 }
   
