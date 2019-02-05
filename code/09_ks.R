@@ -1,12 +1,7 @@
-#08 Mass Balance
-
-library(fields)
 library(magrittr)
 library(dplyr)
-library(data.table)
-library(raster)
 
-#Upstream region
+#Defining constants
 rho_w <- 998.2071 #approximate water density at 20 degrees centigrade in kg/m3
 rho_s <- 1300 #approximate walnut shell density in kg/m3
 kv <- 1.0023*10^(-6) #approximate kinematic viscosity of water at 20 degrees centigrade in m2/s
@@ -40,18 +35,7 @@ ws_d <- function(d) {
     return()
 }
 ws_vectorized <- function(d) sapply(d, ws_d)
-
-curve(ws_vectorized, from=0, to=330*10^(-6))
-
-#Test section
-st <- fread("C:\\Users\\Bearkey\\Documents\\honors_thesis\\data\\sediment_trap\\11152019_sediment_trap.csv", data.table=FALSE) %>%
-  filter(mass>0)
-x_res <- 3
-y_res <- 3
-sp <- Tps(x=st[,c("x", "y")], Y=st$mass)
-eval <- expand.grid(x=seq(x_res/2, by=x_res, length.out=195/x_res), 
-                   y=seq(y_res/2, by=y_res, length.out=60/y_res)) %>%
-  as.matrix()
-predicted <- data.frame(eval, pred=predict.Krig(sp, x=eval)) %>%
-  arrange(desc(y))
-ras <- raster(nrows=20, ncols=65, vals=predicted$pred) #interpolated raster of sediment trap data (each pixel is 3 cm x 3 cm)
+#Calculate the mean ks
+intgr_fn <- function(x) ws_vectorized(x*10^(-6))*dnorm(x, mean=parameters[1], sd=parameters[2])
+ew <- integrate(intgr_fn, lower=0, upper=330)
+ks <- ew$value/0.4

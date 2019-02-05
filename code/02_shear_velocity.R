@@ -17,6 +17,7 @@ names(metadata) <- c("dowels", "relative_position", "height", "number") #renamin
 metadata <- mutate(metadata, height=height/100) #converting cm to m
 
 sheardata <- data.frame() #initializing a data frame to store shear velocity calculations
+temperature <- c() #the temperature
 for (i in 1:length(files)) { #for loop to iterate over each data file
   file <- files[i]
   fileno <- str_match(file, pattern=" ([[:digit:]]+)\\.mat$")[,2] %>% as.numeric()
@@ -24,7 +25,9 @@ for (i in 1:length(files)) { #for loop to iterate over each data file
   data <- readMat(file)
   velocities <- unlist(data$Data[[3]]) %>% unname()
   u <- mean(velocities)
-  add_df <- data.frame(row, shearv=unname(0.4/(u*log(row[,"height"]/z0)))) #calculation according to the law of the wall (units are m/s)
+  temperature <- c(temperature, data$Data[[26]] %>% unlist() %>% unname())
+  add_df <- data.frame(row, shearv=unname((0.4*u)/log(row[,"height"]/z0))) #calculation according to the law of the wall (units are m/s)
   sheardata <- rbind(sheardata, add_df)
 }
 sheardata <- arrange(sheardata, number) #rearranging the rows for better readibility
+mean_temp <- mean(temperature) #mean of temperatures
