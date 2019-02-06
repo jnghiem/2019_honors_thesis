@@ -24,4 +24,4 @@ data <- plyr::rbind.fill(data) %>%
   tidyr::spread(key=location, value=mc) %>%
   mutate(diff=U-D) %>%
   filter(!is.na(diff))
-wilcox.test(x=data$U, y=data$D, alternative="greater", paired=TRUE) #differences are insignificant
+wsr_results <- wilcox.test(x=data$U, y=data$D, alternative="greater", paired=TRUE) #differences are insignificant
