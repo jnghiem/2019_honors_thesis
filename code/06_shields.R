@@ -59,13 +59,16 @@ shields_inv <- function(tau) {
 }
 shields_inv(bs)*10^6 #the particle diameter in microns that corresponds to the threshold of incipient motion, about 15 microns
 
+#png("C:\\Users\\Bearkey\\Documents\\honors_thesis\\images\\shields.png", width=1500, height=1000, res=300)
 ggplot(data.frame(x=seq(0, 330*10^(-6), length.out=300)))+
   stat_function(fun=shields_vectorized, aes(x=x))+
   labs(x=expression(Particle~diameter~(mu~m)), y=expression(Critical~bed~shear~stress~(N/m^2)))+
   scale_x_continuous(labels=function(x) x/10^(-6))+
   geom_vline(xintercept=shields_inv(bs), col="red", lty=2)+
   geom_hline(yintercept=bs, lty=2, col="red")+ #assuming that this upstream bed shear stress is representative
-  theme_bw()
+  theme_bw()+
+  theme(axis.title=element_blank())
+#dev.off()
 
 #Determine the portion of sediment whose critical shear stress lies below the observed shear stress
 pnorm(shields_inv(bs)*10^6, mean=parameters[1], sd=parameters[2])*200 #a very small number (in g)

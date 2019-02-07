@@ -65,11 +65,23 @@ diff_inf <- estimated_parameters %>%
   abs() #the difference of the concentrations integrated from t=0 to infinity, not really interpretable but maybe a useful metric?
 
 #Final visualization
+png("C:\\Users\\Bearkey\\Documents\\honors_thesis\\images\\timeseries.png", width=1500, height=1000, res=300)
 ggplot(data, aes(time, mc, col=as.character(treatment)))+
-  geom_point(show.legend=FALSE)+
-  geom_vline(xintercept=c(5400, 6000), col="purple", lty=2)+
+  geom_point(show.legend=FALSE, alpha=0.2)+
+  #geom_vline(xintercept=c(5400, 6000), col="purple", lty=2)+
   stat_function(data=data.frame(x=seq(0, 6000, length.out=300)), fun=conc_fn[[1]], col="red", aes(x=x), inherit.aes=FALSE)+
   stat_function(data=data.frame(x=seq(0, 6000, length.out=300)), fun=conc_fn[[2]], col="blue", aes(x=x), inherit.aes=FALSE)+
   labs(x="Time (s)", y="Mass concentration (g/L)")+
   scale_color_manual(values=c("red", "blue"))+
-  theme(panel.background=element_rect(fill="white"), panel.grid.major=element_line(color="gray"), panel.border=element_rect("black", fill=NA))
+  theme_bw()+
+  theme(axis.title=element_blank())
+dev.off()
+
+#Find the mean of paired differences of upstream and downstream concentrations
+data %>%
+  filter(treatment==2) %>%
+  select(-log_mc) %>%
+  tidyr::spread(key=location, value=mc) %>%
+  mutate(diff=U-D) %>%
+  extract(,"diff") %>%
+  mean()

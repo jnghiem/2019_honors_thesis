@@ -2,6 +2,7 @@
 #This script fits a normal distribution CDF to sieve analysis data. In effect, it is a parametric estimate of particle size distribution.
 library(magrittr)
 library(dplyr)
+library(ggplot2)
 
 #Input (information from Composition Materials Sieve Analysis)
 size <- data.frame(microns=c(420, 297, 250, 74), passing=c(1, 0.985, 0.95, 0.04)) #for 60/200 walnut shell
@@ -53,3 +54,21 @@ text(x=parameters[1], y=pdf_func(parameters[1]), labels=paste0("Mean = ", round(
 rss <- sum((y-plot_func(x))^2) #computing the residual sum of squares
 tss <- sum((y-mean(y))^2) #computing the total sum of squares
 rsq <- 1-(rss/tss) #computing the coeffcient of determination to assess model fit
+
+#Making a better plot
+##Plot of the CDF
+#png("C:\\Users\\Bearkey\\Documents\\honors_thesis\\images\\cdf.png", width=1500, height=1000, res=300)
+ggplot(data.frame(x=seq(0, 420, length.out=300)))+
+  stat_function(fun=plot_func, aes(x=x))+
+  geom_point(data=filter(size, passing!=0), aes(x=microns, y=passing), col="red", size=2, inherit.aes=FALSE)+
+  geom_hline(yintercept=c(0.5, 0.84), col="blue", lty=2)+
+  theme_bw()+
+  theme(axis.title=element_blank())
+#dev.off()
+##Plot of the PDF
+ggplot(data.frame(x=seq(0, 330, length.out=300)))+
+  stat_function(fun=pdf_func, aes(x=x))+
+  geom_vline(xintercept=c(parameters[1]-parameters[2], sum(parameters)), col="blue", lty=2)+
+  geom_vline(xintercept=parameters[1], lty=2)+
+  theme_bw()+
+  theme(axis.title=element_blank())
