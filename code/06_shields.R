@@ -5,11 +5,11 @@ library(magrittr)
 library(dplyr)
 
 #Defining constants
-sv <- 0.0038656761 #shear velocity in m/s using the ADV experiments from 12/5/2018 in the upstream reach
+sv <- 0.003742604 #shear velocity in m/s using the ADV experiments from 12/5/2018 in the upstream reach
 kv <- 1.0023*10^(-6) #approximate kinematic viscosity of water at 20 degrees centigrade in m2/s
 rho_w <- 998.2071 #approximate water density at 20 degrees centigrade in kg/m3
 rho_s <- 1300 #approximate walnut shell density in kg/m3
-bs <- 0.01494345 #computed bed shear stress for flume at 30 hZ (upstream section)
+bs <- rho_w*sv^2 #computed bed shear stress for flume at 30 hZ (upstream section)
 
 re <- function(d) (sv*d)/kv #a function to compute the particle Reynolds number
 Rep <- function(re) re*sqrt((rho_s-rho_w)/rho_w) #a function to compute the transformed particle Reynolds number
@@ -59,7 +59,7 @@ shields_inv <- function(tau) {
 }
 shields_inv(bs)*10^6 #the particle diameter in microns that corresponds to the threshold of incipient motion, about 15 microns
 
-#png("C:\\Users\\Bearkey\\Documents\\honors_thesis\\images\\shields.png", width=1500, height=1000, res=300)
+png("C:\\Users\\Bearkey\\Documents\\honors_thesis\\images\\shields.png", width=1500, height=1000, res=300)
 ggplot(data.frame(x=seq(0, 330*10^(-6), length.out=300)))+
   stat_function(fun=shields_vectorized, aes(x=x))+
   labs(x=expression(Particle~diameter~(mu~m)), y=expression(Critical~bed~shear~stress~(N/m^2)))+
@@ -68,7 +68,7 @@ ggplot(data.frame(x=seq(0, 330*10^(-6), length.out=300)))+
   geom_hline(yintercept=bs, lty=2, col="red")+ #assuming that this upstream bed shear stress is representative
   theme_bw()+
   theme(axis.title=element_blank())
-#dev.off()
+dev.off()
 
 #Determine the portion of sediment whose critical shear stress lies below the observed shear stress
 pnorm(shields_inv(bs)*10^6, mean=parameters[1], sd=parameters[2])*200 #a very small number (in g)

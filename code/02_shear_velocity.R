@@ -9,7 +9,7 @@ library(stringr)
 library(magrittr)
 
 files <- list.files("C:\\Users\\Bearkey\\Documents\\Ecogeomorphic_Flume\\esdlflume\\data\\raw\\vectrino profile experiment 181205", pattern="\\.mat$", full.names=TRUE) #all data files
-z0 <- (parameters[1]+3*parameters[2])*10^(-6) #rough estimate of the characteristic length of bed roughness, taken to be the particle diameter three standard deviations above the mean from the estimated distribution
+z0 <- (parameters[1]+2.5*parameters[2])*10^(-6) #rough estimate of the characteristic length of bed roughness, taken to be the particle diameter two standard deviations above the mean from the estimated distribution
 
 metadata <- fread("C:\\Users\\Bearkey\\Documents\\Ecogeomorphic_Flume\\esdlflume\\data\\raw\\vectrino profile experiment 181205\\positions.csv", data.table=FALSE) %>%
   select(1:4) #reading in metadata
