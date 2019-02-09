@@ -46,15 +46,16 @@ curve(ws_vectorized, from=0, to=330*10^(-6))
 #Test section
 st <- fread("C:\\Users\\Bearkey\\Documents\\honors_thesis\\data\\sediment_trap\\11152019_sediment_trap.csv", data.table=FALSE) %>%
   filter(mass>0)
-x_res <- 1
-y_res <- 1
+x_res <- 3
+y_res <- 3
 sp <- Tps(x=st[,c("x", "y")], Y=st$mass/(pi*0.65^2))
 eval <- expand.grid(x=seq(x_res/2, by=x_res, length.out=195/x_res), 
                    y=seq(y_res/2, by=y_res, length.out=60/y_res)) %>%
   as.matrix()
 predicted <- data.frame(eval, pred=predict.Krig(sp, x=eval)) %>%
-  arrange(desc(y))
+  arrange(desc(y)) %>%
+  mutate(pred=pred/1000)
 ras <- raster(nrows=60/y_res, ncols=195/x_res, vals=predicted$pred*x_res*y_res) #interpolated raster of sediment trap data (each pixel is 3 cm x 3 cm)
 plot(ras)
 
-total_settled <- sum(predicted$pred*x_res*y_res) #way too large, are the sediment traps drawing in sediment?
+total_settled <- sum(predicted$pred*x_res*y_res) #total settled mass in the test section in g
