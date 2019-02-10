@@ -1,6 +1,7 @@
 #07 Treatment Comparison
 library(magrittr)
 library(dplyr)
+library(ggplot2)
 
 #Read in the pump data
 files <- list.files("C:\\Users\\Bearkey\\Documents\\honors_thesis\\data\\pump", full.names=TRUE)
@@ -65,7 +66,7 @@ diff_inf <- estimated_parameters %>%
   abs() #the difference of the concentrations integrated from t=0 to infinity, not really interpretable but maybe a useful metric?
 
 #Final visualization
-png("C:\\Users\\Bearkey\\Documents\\honors_thesis\\images\\timeseries.png", width=1500, height=1000, res=300)
+#png("C:\\Users\\Bearkey\\Documents\\honors_thesis\\images\\timeseries.png", width=1500, height=1000, res=300)
 ggplot(data, aes(time, mc, col=as.character(treatment)))+
   geom_point(show.legend=FALSE, alpha=0.2)+
   #geom_vline(xintercept=c(5400, 6000), col="purple", lty=2)+
@@ -75,7 +76,7 @@ ggplot(data, aes(time, mc, col=as.character(treatment)))+
   scale_color_manual(values=c("red", "blue"))+
   theme_bw()+
   theme(axis.title=element_blank())
-dev.off()
+#dev.off()
 
 #Find the mean of paired differences of upstream and downstream concentrations
 data %>%

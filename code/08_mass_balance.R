@@ -46,6 +46,7 @@ curve(ws_vectorized, from=0, to=330*10^(-6))
 #Test section
 st <- fread("C:\\Users\\Bearkey\\Documents\\honors_thesis\\data\\sediment_trap\\11152019_sediment_trap.csv", data.table=FALSE) %>%
   filter(mass>0)
+##Thin-plate spline interpolation
 x_res <- 3
 y_res <- 3
 sp <- Tps(x=st[,c("x", "y")], Y=st$mass/(pi*0.65^2))
@@ -59,3 +60,8 @@ ras <- raster(nrows=60/y_res, ncols=195/x_res, vals=predicted$pred*x_res*y_res) 
 plot(ras)
 
 total_settled <- sum(predicted$pred*x_res*y_res) #total settled mass in the test section in g
+
+##Simple averaging
+total_settled <- mean(st$mass) %>%
+  divide_by(1000*pi*0.65^2) %>%
+  multiply_by(60*195)
