@@ -1,10 +1,10 @@
 #08 Mass Balance
 
 library(fields)
-library(magrittr)
-library(dplyr)
 library(data.table)
 library(raster)
+library(magrittr)
+library(dplyr)
 
 #Upstream region
 rho_w <- 998.2071 #approximate water density at 20 degrees centigrade in kg/m3
@@ -62,6 +62,7 @@ plot(ras)
 total_settled <- sum(predicted$pred*x_res*y_res) #total settled mass in the test section in g
 
 ##Simple averaging
-total_settled <- mean(st$mass) %>%
-  divide_by(1000*pi*0.65^2) %>%
-  multiply_by(60*195)
+#total_settled <- mean(st$mass) %>%
+  #divide_by(1000*pi*0.65^2) %>%
+  #multiply_by(60*195)
+
