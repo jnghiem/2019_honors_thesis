@@ -1,4 +1,5 @@
 #07 Treatment Comparison
+library(tidyr)
 library(magrittr)
 library(dplyr)
 library(ggplot2)
@@ -86,3 +87,13 @@ data %>%
   mutate(diff=U-D) %>%
   extract(,"diff") %>%
   mean()
+
+#Find if the difference between particle capture rates is significant
+paired_lr <- data %>%
+  select(-log_mc) %>%
+  spread(key=treatment, value=mc) %>%
+  group_by(time, location, height) %>%
+  summarise(lr=log(`1`/`2`)) %>%
+  as.data.frame()
+
+summary(lm(lr~time, data=paired_lr)) #the difference in capture rates is very significant

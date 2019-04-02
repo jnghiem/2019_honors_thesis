@@ -11,8 +11,12 @@ dc <- 0.003175 #collector diameter (m)
 lc <- 1450 #approximate stem density (m^-2)
 kv <- 1.0023*10^(-6) #approximate kinematic viscosity of water at 20 degrees centigrade in m2/s
 
-ks_comp <- function(t, m0, ms) (1/t)*log(m0/(m0-ms)) #a function to calculate ks
-ks <- ks_comp(max(data$time), m0, total_settled) #computing ks
+ks_comp <- function(t, m0, ms, k) { #based on Jordan's result
+  numerator <- ms*k
+  denom <- m0*(1-exp(-k*t))
+  return(numerator/denom)
+}
+ks <- ks_comp(max(data$time), m0, settled_test+settled_outside, estimated_parameters[2,"k"])
 kc <- estimated_parameters[2,"k"]-ks #subtract to obtain kc
 ece_comp <- function(kc, u, dc, lc) kc/(u*dc*lc) #a function to calculate effective capture efficiency (mks units)
 ece <- ece_comp(kc, u, dc, lc)*100 #effective capture efficiency (as a percentage)

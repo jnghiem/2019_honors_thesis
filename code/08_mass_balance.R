@@ -49,9 +49,9 @@ st <- fread("C:\\Users\\Bearkey\\Documents\\honors_thesis\\data\\sediment_trap\\
 ##Thin-plate spline interpolation
 x_res <- 3
 y_res <- 3
-sp <- Tps(x=st[,c("x", "y")], Y=st$mass/(pi*0.65^2))
+sp <- Tps(x=st[,c("x", "y")], Y=st$mass/(pi*1.27^2))
 eval <- expand.grid(x=seq(x_res/2, by=x_res, length.out=195/x_res), 
-                   y=seq(y_res/2, by=y_res, length.out=60/y_res)) %>%
+                    y=seq(y_res/2, by=y_res, length.out=60/y_res)) %>%
   as.matrix()
 predicted <- data.frame(eval, pred=predict.Krig(sp, x=eval)) %>%
   arrange(desc(y)) %>%
@@ -59,10 +59,16 @@ predicted <- data.frame(eval, pred=predict.Krig(sp, x=eval)) %>%
 ras <- raster(nrows=60/y_res, ncols=195/x_res, vals=predicted$pred*x_res*y_res) #interpolated raster of sediment trap data (each pixel is 3 cm x 3 cm)
 plot(ras)
 
-total_settled <- sum(predicted$pred*x_res*y_res) #total settled mass in the test section in g
+settled_test <- sum(predicted$pred*x_res*y_res) #total settled mass in the test section in g
 
 ##Simple averaging
 #total_settled <- mean(st$mass) %>%
-  #divide_by(1000*pi*0.65^2) %>%
-  #multiply_by(60*195)
+#divide_by(1000*pi*0.65^2) %>%
+#multiply_by(60*195)
 
+#Outside of test section
+st_nodowel <- c(14.11, 8.51, 15.69,
+                8.63, 12.88, 16.82,
+                13.5, 10.5, 9.38) #sediment mass in mg for 3/21 control run
+settled_outside <- (mean(st_nodowel)*(1.98/(pi*0.0254^2)))/1000 #scaling the sediment trap data to open channel area outside of test section
+#this gives the settled mass outside of the test section in g

@@ -1,4 +1,4 @@
-#08 Location Comparison
+#03 Location Comparison
 
 #Wilcoxon signed rank test with just the dowel and grease treatment
 wsr <- function(file) {
