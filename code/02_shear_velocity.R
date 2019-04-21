@@ -19,17 +19,19 @@ sheardata <- data.frame() #initializing a data frame to store shear velocity cal
 temperature <- c() #the temperature
 vels <- c()
 sds <- c()
+all_vels <- c()
 for (i in 1:length(files)) { #for loop to iterate over each data file
   file <- files[i]
   fileno <- str_match(file, pattern="\\.([[:digit:]]+)\\.mat$")[,2] %>% as.numeric()
   row <- filter(metadata, number==fileno)
   data <- readMat(file)
   velocities <- unlist(data$Data[[4]]) %>% unname()
+  all_vels <- c(all_vels, velocities)
   u <- mean(velocities) %>% abs()
   vels <- c(vels, u)
-  sds <- c(sds, sd(velocities))
+  #sds <- c(sds, sd(velocities))
   temperature <- c(temperature, data$Data[[26]] %>% unlist() %>% unname())
-  add_df <- data.frame(row, shearv=unname((0.4*u)/log(row[,"height"]/z0))) #calculation according to the law of the wall (units are m/s)
+  add_df <- data.frame(row, shearv=unname((0.4*u)/log(row[,"height"]/z0)), sd=(0.4*sd(velocities))/log(row[,"height"]/z0)) #calculation according to the law of the wall (units are m/s)
   sheardata <- rbind(sheardata, add_df)
 }
 sheardata <- arrange(sheardata, number) #rearranging the rows for better readibility
