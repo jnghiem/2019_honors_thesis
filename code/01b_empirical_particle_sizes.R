@@ -13,6 +13,7 @@ sizes <- !(names(data) %>% as.numeric() %>% is.na()) #find the columns with dist
 distn <- data[sizes] #extract the data
 total_conc <- data[,"Total Volume Concentration"][2] %>% as.numeric() #total volume concentration, to normalize data points
 d84 <- data[,"D84"][2] %>% as.numeric() #D84, for use with the shear velocity estimation
+d50 <- data[,"D50"][2] %>% as.numeric()
 sizedistn <- data.frame(median_size=names(distn) %>% as.numeric(), #data frame with size distribution data
                         vol_concentration=t(distn[2,])[,1] %>% as.numeric()) %>%
   mutate(density=vol_concentration/total_conc)

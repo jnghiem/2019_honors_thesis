@@ -5,8 +5,8 @@ library(magrittr)
 library(dplyr)
 
 #Defining constants
-svu <- 0.003942534 #shear velocity in m/s using the ADV experiments from 2/20/2019 in the central portion of the upstream reach
-svd <- 0.003762421 #shear velocity in m/s using the ADV experiments from 2/20/2019 in the central portion of the test section (with dowels)
+svu <- 0.003077767 #shear velocity in m/s using the ADV experiments from 2/20/2019 in the central portion of the upstream reach
+svd <- 0.002937161 #shear velocity in m/s using the ADV experiments from 2/20/2019 in the central portion of the test section (with dowels)
 kv <- 1.0023*10^(-6) #approximate kinematic viscosity of water at 20 degrees centigrade in m2/s
 rho_w <- 998.2071 #approximate water density at 20 degrees centigrade in kg/m3
 rho_s <- 1300 #approximate walnut shell density in kg/m3
@@ -76,7 +76,7 @@ shields_inv <- function(tau, region) {
 shields_inv(bsu, "upstream")*10^6 #the particle diameter in microns that corresponds to the threshold of incipient motion (upstream)
 shields_inv(bsd, "test")*10^6 #the particle diameter in microns that corresponds to the threshold of incipient motion (test section)
 
-png("C:\\Users\\Bearkey\\Documents\\honors_thesis\\images\\shields.png", width=1500, height=1000, res=300)
+#png("C:\\Users\\Bearkey\\Documents\\honors_thesis\\images\\shields_LISSTportable.png", width=1500, height=1000, res=300)
 ggplot(data.frame(x=seq(0, 330*10^(-6), length.out=300)))+
   stat_function(fun=shields_vectorized, aes(x=x), args=list(region="upstream"), col="red")+
   stat_function(fun=shields_vectorized, aes(x=x), args=list(region="test"), col="blue")+
@@ -88,7 +88,7 @@ ggplot(data.frame(x=seq(0, 330*10^(-6), length.out=300)))+
   geom_hline(yintercept=bsd, lty=2, col="blue")+
   theme_bw()+
   theme(axis.title=element_blank())
-dev.off()
+#dev.off()
 
 #Determine the portion of sediment whose critical shear stress lies below the observed shear stress
 pnorm(shields_inv(bsu, "upstream")*10^6, mean=parameters[1], sd=parameters[2])*200 #a very small number (in g)

@@ -22,6 +22,24 @@ ece_comp <- function(kc, u, dc, lc) kc/(u*dc*lc) #a function to calculate effect
 ece <- ece_comp(kc, u, dc, lc)*100 #effective capture efficiency (as a percentage)
 
 #Compare to Fauria et al. [2015] model for 7209 m^-2 stem density and biofilm
-ece_empir <- function(Rec, R) 2.06*Rec^(-1.14)*R^0.65 #Rec is collector Reynolds number and R is ratio of particle diameter to collector diameter
+ece_fauria <- function(Rec, R) 2.06*Rec^(-1.14)*R^0.65 #Rec is collector Reynolds number and R is ratio of particle diameter to collector diameter
+ece_fauria((u*dc)/kv, (d50*10^(-6))/dc)*100
 
-ece_empir((u*dc)/kv, (165.08*10^(-6))/dc)
+#Compare to Palmer et al. [2004] model
+ece_palmer <- function(Rec, R) 0.224*Rec^(0.718)*R^2.08
+ece_palmer((u*dc)/kv, (d50*10^(-6))/dc)*100
+
+#Integrated ECE estimate
+data <- fread("C:\\Users\\Bearkey\\Documents\\Ecogeomorphic_Flume\\esdlflume\\data\\raw\\LISST portable size distn experiment 190422\\WSD101.ASC", data.table=FALSE)
+sizes <- !(names(data) %>% as.numeric() %>% is.na()) #find the columns with distribution data
+distn <- data[sizes] #extract the data
+total_conc <- data[,"Total Volume Concentration"][2] %>% as.numeric() #total volume concentration, to normalize data points
+d84 <- data[,"D84"][2] %>% as.numeric() #D84, for use with the shear velocity estimation
+d50 <- data[,"D50"][2] %>% as.numeric()
+sizedistn <- data.frame(median_size=names(distn) %>% as.numeric(), #data frame with size distribution data
+                        vol_concentration=t(distn[2,])[,1] %>% as.numeric()) %>%
+  mutate(density=vol_concentration/total_conc)
+sizedistn <- sizedistn %>%
+  mutate(ece_f=ece_fauria((u*dc)/kv, (median_size*10^(-6))/dc), ece_p=ece_palmer((u*dc)/kv, (median_size*10^(-6))/dc))
+ece_fauria_estimate <- sum(sizedistn$density*sizedistn$ece_f)*100
+ece_palmer_estimate <- sum(sizedistn$density*sizedistn$ece_p)*100
