@@ -18,6 +18,7 @@ sizedistn <- data.frame(median_size=names(distn) %>% as.numeric(), #data frame w
                         vol_concentration=t(distn[2,])[,1] %>% as.numeric()) %>%
   mutate(density=vol_concentration/total_conc)
 cumsizedistn <- mutate(sizedistn, cumulative=cumsum(density)) #data frame with cumulative size distribution
+sieve_analysis <- data.frame(diameter=c(250, 74), proportion=c(1, 0.88)) #sieve analysis data from Composition Materials
 #A logarithmic plot of particle size distribution
 #png("C:\\Users\\Bearkey\\Documents\\honors_thesis\\images\\pdf_empirical.png", width=1500, height=1000, res=300)
 ggplot(sizedistn, aes(median_size, density))+
@@ -33,6 +34,7 @@ ggplot(sizedistn, aes(median_size, density))+
 ggplot(cumsizedistn, aes(median_size, cumulative))+
   geom_point(size=0.8)+
   geom_line()+
+  geom_point(aes(diameter, proportion), shape=4, size=2, col="red", data=sieve_analysis, inherit.aes=FALSE)+
   geom_hline(yintercept=c(0.5, 0.84), lty=2)+
   scale_x_log10()+
   annotation_logticks(sides="b")+
